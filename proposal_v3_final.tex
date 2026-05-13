@@ -16,6 +16,14 @@
 \usepackage{parskip}
 \usepackage{natbib}
 \usepackage{caption}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,  % This ensures boxes are used instead of colored text
+    pdfborder={0 0 1}  % This defines the border style [horizontal corner radius, vertical corner radius, thickness]
+}
 
 % --- Hyperref setup ---
 \hypersetup{
@@ -23,7 +31,7 @@
     linkcolor=black,
     citecolor=teal,
     urlcolor=teal,
-    pdftitle={Thesis Proposal v3},
+    pdftitle={BSc Thesis Proposal},
     pdfauthor={Joost}
 }
 
@@ -32,9 +40,14 @@
 \newtheorem{remark}{Remark}
 
 % --- Section formatting ---
-\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
-\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
-\titleformat{\subsubsection}{\normalsize\itshape}{}{0em}{}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.6em}{}
+
+% --- Section spacing ---
+\titlespacing*{\section}{0pt}{1.8em}{0.8em}
+\titlespacing*{\subsection}{0pt}{1.2em}{0.4em}
+\titlespacing*{\subsubsection}{0pt}{0.8em}{0.3em}
 
 % --- Column type for tables ---
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
@@ -47,60 +60,108 @@
 % --- Spacing ---
 \setstretch{1.15}
 
+% --- Header/Footer ---
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\textit{BSc Thesis Proposal}}
+\fancyhead[R]{\small\textit{Erasmus University Rotterdam}}
+\fancyfoot[C]{\small\thepage\,/\,\pageref{LastPage}}
+
+% --- Caption styling ---
+\captionsetup{font=small, labelfont=bf, skip=6pt}
+
 % ============================================================
 \begin{document}
 % ============================================================
 
 % --- Title block ---
+\thispagestyle{empty}
+
+\vspace*{0.5cm}
+
 \begin{center}
-    {\LARGE\bfseries Thesis Proposal v3\,---\,Final}\\[1em]
-    {\large\bfseries FDR-Controlled Variable Selection under Parameter Instability:\\
-    Comparing IPAD Knockoffs and OCMT with an Application\\
-    to Equity Premium Prediction}\\[1.2em]
-    {\normalsize BSc Econometrics \& Operations Research\,\textbar\,Erasmus University Rotterdam}\\
-    {\normalsize Supervisor: Sam van Meer}\\[0.5em]
+    {\Large\bfseries FDR-Controlled Variable Selection under Parameter Instability:\\[0.4em]
+    Comparing IPAD Knockoffs and OCMT with an Application\\[0.2em]
+    to Equity Premium Prediction}\\[2em]
+    {\normalsize\textsc{BSc Thesis Proposal}}\\[0.8em]
+    {\normalsize BSc Econometrics \& Operations Research}\\
+    {\normalsize Erasmus School of Economics\,\textbar\,Erasmus University Rotterdam}\\[1em]
+    {\normalsize Supervisor: Jesse Hemerik}\\[0.8em]
     {\color{darkgray}\small\today}
 \end{center}
 
-\vspace{0.5em}
-\hrule
-\vspace{1.5em}
+\vspace{1em}
+\hrule height 0.5pt
+\vspace{2em}
 
 % ============================================================
 \section{Context and Motivation}
 % ============================================================
 
-Variable selection in high-dimensional regressions is a central problem in econometric forecasting. Two recent approaches address it from different angles:
-
-\begin{enumerate}[leftmargin=*, label=\arabic*.]
-    \item \textbf{IPAD} \citep{fan2020ipad}: uses Model-X knockoffs with a factor model for the covariate distribution to achieve FDR-controlled variable selection. Explicitly assumes stable parameters: \emph{``Our work has focused on the scenario of static models''} (p.\,1833).
-
-    \item \textbf{OCMT under instability} \citep{chudik2024ocmt}: studies the One Covariate at a Time Multiple Testing procedure under time-varying parameters. Shows OCMT selects variables with non-zero \emph{average} effects and recommends full-sample selection with down-weighted forecasting. Provides no FDR control.
+Variable selection in high dimensional regressions is a frequently occurring problem in econometrics and beyond. Two recent approaches attack this from different angles, with one applying the \citet{candes2018} Model-X Knockoffs framwework.
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+    \item \citet{fan2020ipad} applies Model-X Knockoffs framework with a factor model for the covariate
+distribution to achieve FDR-controlled variable selection.
+    \item \citet{chudik2024ocmt} studies the \textit{One Covariate at a
+Time Multiple Testing} procedure under time-varying parameters. Shows OCMT selects
+variables with non-zero average effects and recommends full-sample selection with
+down-weighted forecasting. Provides no FDR control.
 \end{enumerate}
 
-Mahrad Sharifvaghefi is a co-author on both papers. These represent two lines of work by the same researcher attacking the same problem---high-dimensional variable selection for economic forecasting---from different frameworks. No paper compares them or asks: \emph{under parameter instability, when should a forecaster prefer FDR-controlled selection (IPAD) over threshold-based selection (OCMT), and can we get the best of both?}
+Mahrad Sharifvaghefi is a co-author on both papers. These represent two lines of work by
+the same researcher attacking the same problem. No paper compares them or asks: under
+parameter instability, when should a forecaster prefer FDR-controlled selection (IPAD)
+over threshold-based selection (OCMT), and can we get the best of both, which is what this proposal/thesis aims to adress.
 
-% ============================================================
-\section{Research Questions}
-% ============================================================
+I have divided this into 3 smaller research questions.
 
-\begin{enumerate}[leftmargin=*, label=\textbf{RQ\arabic*.}]
-    \item \textbf{Diagnostic.} How does parameter instability affect the FDR control and power of IPAD knockoffs? How does it affect the false discovery behaviour of OCMT (which has no formal FDR guarantee)?
+\newpage
+\begin{enumerate}[leftmargin=*, label=\textbf{RQ\arabic*.}, itemsep=6pt]
+    \item \textbf{Diagnostic.} How does parameter instability affect the FDR control and power of IPAD knockoffs? How does it affect the false discovery behaviour of OCMT (as OCMT has no formal FDR guarantee)?
 
-    \item \textbf{Comparative.} Under structural breaks, which method provides better variable selection for forecasting---IPAD (FDR control, assumes stability) or OCMT (handles instability, no FDR control)?
+    \item \textbf{Comparative.} Under structural breaks, which method provides better variable selection for forecasting; IPAD (FDR control and assumes stability) or OCMT (manages instability and no FDR control)?
 
-    \item \textbf{Constructive.} Can discounted IPAD---using exponentially weighted LCD statistics---bridge the gap, achieving both OCMT's robustness to breaks and IPAD's FDR control?
+    \item \textbf{Constructive.}Can discounted IPAD retain meaningful power toward the post-break
+ │ regime, and how does the resulting power–FDR trade-off compare to rolling-window IPAD and the oracle?
 \end{enumerate}
 
+
 % ============================================================
-\section{Core Conceptual Contribution: The Dual-Null Separation}
+\section{Where Does It Stand in the Literature}
 % ============================================================
 
-Under a structural break at $t^*$ with coefficients $\beta^{(1)}$ (pre-break) and $\beta^{(2)}$ (post-break), the relevant null hypothesis is ambiguous. Table~\ref{tab:dualnull} formalises this.
-
-\begin{table}[h!]
+\begin{table}[H]
 \centering
-\caption{Dual-null separation under a structural break}
+\caption{Literature gap: what is known and what remains open}
+\label{tab:gap}
+\small
+\begin{tabular}{L{3.5cm} L{4.8cm} L{5cm}}
+\toprule
+Paper & What it says & \textbf{What remains open} \\
+\midrule
+\citet{fan2020ipad}, & ``Our work has focused on the scenario of static models'' & What happens to IPAD FDR when $\beta$ changes? \\[4pt]
+\citet{chudik2024ocmt},  & OCMT selects variables with non-zero average effects; recommends down-weighting at forecasting stage only & Can selection itself be localised? What is OCMT's empirical FDR? \\[4pt]
+\citet{chi2025},  & Handles serial dependence; assumes stable $\beta$ & Addresses serial dependence, not coefficient instability) \\[4pt]
+\citet{liu2024},  & Uses knockoffs to detect change points & Does not do variable selection \\[4pt]
+\citet{barber2020} & Show  FDR $\leq q \cdot e^\epsilon$ when $P_X$ is misspecified & Does not address $\beta$ instability (different type of misspecification) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Methodology}
+% ============================================================
+
+Before we dive into the models, it is important to show that the models can not be compared in terms of FDR under the same null hypothesis.
+
+\subsection{Dual Null}
+
+Say variable $j$ has $\beta_j = 0.5$ pre-break and $\beta_j = 0$ post-break. If you're forecasting tomorrow after the break, that variable is noise: selecting it is a false discovery fron a forecasting standpoint. But if you ask ``did this variable ever matter?'', the answer is yes: its time-averaged coefficient is $0.25$. OCMT and standard IPAD would select it (although for different reasons) and call that a success. The additional models I propose would call it a false discovery. This is formalised in table below.
+
+\begin{table}[H]
+\centering
+\caption{Dual-null separation under a structural break at $t^*$ with coefficients $\beta^{(1)}$ (pre-break) and $\beta^{(2)}$ (post-break)}
 \label{tab:dualnull}
 \small
 \begin{tabular}{L{2.8cm} L{5cm} L{3cm} L{3.5cm}}
@@ -114,82 +175,67 @@ Full-sample null $H_0^{\text{full}}$ & $\{j : \text{plim}\;\hat{\beta}_j^{\text{
 \end{tabular}
 \end{table}
 
-\textbf{This is not merely a technicality.} A variable active in regime 1 but null in regime 2 is a \emph{true} discovery under $H_0^{\text{avg}}$ (the OCMT perspective) but a \emph{false} discovery under $H_0^{(2)}$ (the forecasting perspective). This separation explains \emph{why} IPAD and OCMT behave differently under breaks---they answer different inferential questions. Both nulls are evaluated and reported throughout.
+To revisit the example before the table, this variable $j$ would be a true discovery under $H_0^{avg}$ and  $H_0^{\text{full}}$ , which is OCMT's and standard IPAD perspective respectively, but a false discovery under $H_0^{(2)}$, which is the discounted IPAD or forecasting perspective. This also shows why the models behave differently under breaks.
 
-% ============================================================
-\section{Theoretical Foundation}
-% ============================================================
+\subsection{Assumptions}
 
-\subsection{Model-X Knockoffs \citep{candes2018}}
+\begin{enumerate}[leftmargin=*, label=\textbf{A\arabic*.}]
+    \item \textbf{Stable $P_X$.} The covariate distribution does not change at the break. Only $\beta_t$ changes. This isolates the coefficient instability channel and ensures knockoff validity.
+    \item \textbf{Single break.} The simplest form of instability.
+    \item \textbf{Cross-sectional independence across $t$.} Observations are i.i.d.\ draws from the factor model within each period. 
+    \item \textbf{Known target FDR level.} $q = 0.20$ throughout (standard in the knockoff literature).
+\end{enumerate}
+
+As mentioned above \textbf{A1} is necessary for knockoff validity, however, some violations are inevitable in empirical experiments. \citet{barber2020} show that FDR is still bounded under misspecified $P_X$, although by a higher bound ($q \to q \cdot e^\epsilon$). 
+
+\subsection{Theoretical Foundation (\citet{candes2018}'s Model-X Knockoffs)}
 
 Given i.i.d.\ observations $(X_i, Y_i)$, construct knockoff variables $\tilde{X}$ satisfying:
-\begin{itemize}[leftmargin=*]
-    \item \emph{Pairwise exchangeability:} $(X, \tilde{X})_{\text{swap}(S)} \stackrel{d}{=} (X, \tilde{X})$ for all $S \subseteq \{1,\ldots,p\}$
-    \item \emph{Conditional independence:} $\tilde{X} \perp\!\!\!\perp Y \mid X$
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+    \item Pairwise exchangeability: $(X, \tilde{X})_{\text{swap}(S)} \stackrel{d}{=} (X, \tilde{X})$ for all $S \subseteq \{1,\ldots,p\}$
+    \item Conditional independence: $\tilde{X} \perp\!\!\!\perp Y \mid X$
 \end{itemize}
 
 Feature importance statistics $W_j$ satisfy the sign-flip property, and the knockoff+ filter at target level $q$ provides finite-sample FDR control: $\text{FDR} \leq q$.
 
-\textbf{Key point.} The knockoff construction depends only on $P_X$, not on $P_{Y|X}$. Therefore, if $P_X$ is stable but $\beta_t$ changes, knockoffs remain valid---only the signal detection step is affected.
+The knockoff construction depends only on $P_X$, not on $P_{Y|X}$. Thus, if stable $P_X$  but $\beta_t$ changes, knockoffs remain valid, only the signal detection step is affected.
 
-\subsection{IPAD \citep{fan2020ipad}}
+\subsection{Baselines}
+\subsubsection{Standard IPAD \citep{fan2020ipad} \textit{(my "direct" replication, will use same DGP)}}
+ 
+IPAD  applies knockoffs for economic data by modelling the covariate distribution with a latent factor model:
+\begin{equation}
+    X_t = BF_t + U_t, \qquad F_t \sim \mathcal{N}(0, I_r), \quad U_t \sim \mathcal{N}(0, \Sigma_U),
+\end{equation}
+where $B \in \mathbb{R}^{p \times r}$ is the loading matrix and $\Sigma_U$ is diagonal. Number of factors are estimated using \citet{ahn2013} ratio test, which gives an estimate $\hat{\Sigma}_X = \hat{B}\hat{B}' + \hat{\Sigma}_U$ from which knockoffs are constructed.
 
-Models covariates via a latent factor model $X_t = BF_t + U_t$. Estimates $\Sigma_X = BB' + \Sigma_U$ via PCA (with Ahn--Horenstein eigenvalue ratio for $\hat{r}$), enabling approximate knockoff construction. Uses the LCD statistic:
-\[
+The feature importance statistic is the LCD (Lasso Coefficient Difference):
+\begin{equation}
     W_j = |\hat{\beta}_j| - |\hat{\beta}_{j+p}|,
-\]
-where $(\hat{\beta}_1, \ldots, \hat{\beta}_{2p})$ is the Lasso estimate on the augmented design $[X, \tilde{X}]$. Provides asymptotic FDR control. \textbf{Assumes stable $\beta$.}
+\end{equation}
+where $(\hat{\beta}_1, \ldots, \hat{\beta}_{2p})$ is the Lasso estimate on the $[X, \tilde{X}]$ with cross-validated $\lambda$.  The knockoff$+$ filter is applied at $q = 0.20$. Standard IPAD assumes stable $\beta$ and targets $H_0^{\text{full}}$.
 
-\subsection{OCMT \citep{chudik2018, chudik2024ocmt}}
+The empirical application uses 100 knockff repetitions for forecast averaging and selection frequency. Although \citet{nguyen2020} show that aggregating knockoff realisations improves power, I leave it as a natural extension.
+
+\subsubsection{OCMT, \citet{chudik2018, chudik2024ocmt}}
 
 Tests each covariate individually: regress $Y$ on $X_j$, obtain $t$-statistic, threshold at
-\[
-    c_{p,T} = \Phi^{-1}\!\left(1 - \frac{p}{2\delta_T}\right), \quad p/\delta_T \to 0.
-\]
-Under stability, OCMT consistently selects all signals and no noise. Under instability, OCMT selects variables with non-zero \emph{average} marginal effects. \textbf{No FDR control is provided or claimed.}
+$$c_p(N, \delta) = \Phi^{-1}\!\left(1 - \frac{\alpha}{2\,N^\delta}\right),$$
+where $\alpha$ is the nominal significance level (e.g.\ $\alpha = 0.05$), $N$ is the number of candidate covariates, and $\delta > 0$ is a penalisation exponent. \citet{chudik2024ocmt} recommend $\delta = 1$, "yielding a Bonferonni like correction ($\alpha/N$ per test, two-sided)".
 
-% ============================================================
-\section{The Gap}
-% ============================================================
+Under coefficient stability, OCMT consistently selects all signals and excludes all noise variables as $T \to \infty$. Under a structural break, \citet{chudik2024ocmt} show that OCMT selects variables whose time-averagedeffect is non-zero, i.e. targeting the $H_0^{\text{avg}}$ defined in Table \ref{tab:dualnull} . 
+They recommend to apply down-weighting at the \emph{forecasting} stage only (exponentially weighted OLS on the selected variables), leaving the selection step unweighted. No formal FDR control is provided or claimed.
 
-\begin{table}[h!]
-\centering
-\caption{Literature gap: what is known and what remains open}
-\label{tab:gap}
-\small
-\begin{tabular}{L{3.5cm} L{4.8cm} L{5cm}}
-\toprule
-\textbf{Source} & \textbf{What it says} & \textbf{What remains open} \\
-\midrule
-\citet{fan2020ipad}, p.\,1833 & ``Our work has focused on the scenario of static models'' & What happens to IPAD FDR when $\beta$ changes? \\[4pt]
-\citet{chudik2024ocmt}, \S5 & OCMT selects variables with non-zero average effects; recommends down-weighting at forecasting stage only & Can selection itself be localised? What is OCMT's empirical FDR? \\[4pt]
-Chi et al.\ (2025) --- TSKI & Handles serial dependence; assumes stable $\beta$ & Orthogonal to this thesis (dependence $\neq$ instability) \\[4pt]
-Liu, Sun \& Ke (2024) --- GKnockoff & Uses knockoffs to \emph{detect} change points & Does not do variable selection \emph{despite} breaks \\[4pt]
-\citet{barber2020} & Robust knockoffs: FDR $\leq q \cdot e^\epsilon$ when $P_X$ is misspecified & Does not address $\beta$ instability (different misspecification) \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Proposed Methods}
 
-\textbf{No paper compares IPAD and OCMT under instability. No paper studies discounted knockoff statistics. No paper formalises the dual-null issue.}
+\subsubsection{Discounted IPAD (Proposed Modification)}
 
-% ============================================================
-\section{Methods}
-% ============================================================
-
-\subsection{Method 1: Standard IPAD (Baseline)}
-PCA-based factor estimation with Ahn--Horenstein (2013) eigenvalue ratio for $\hat{r}$; second-order approximate knockoff construction from $\hat{\Sigma}_X$; LCD statistics via Lasso (cross-validated $\lambda$) on augmented design $[X, \tilde{X}]$; knockoff+ filter at $q = 0.20$.
-
-\subsection{Method 2: OCMT (Baseline)}
-Univariate OLS for each predictor; threshold at $c_{p,T} = \Phi^{-1}(1 - p/(2T^{1.1}))$; empirical FDR reported (informative even without formal guarantee).
-
-\subsection{Method 3: Discounted IPAD (Proposed Modification)}
-
-\textbf{Idea.} Replace the standard Lasso with an exponentially weighted Lasso:
+Idea is to replace the standard Lasso with an exponentially weighted Lasso:
 \[
     \hat{\beta}^{(\lambda,\delta)} = \underset{b}{\arg\min}\ \sum_{t=1}^T \delta^{T-t}\bigl(Y_t - [X_t, \tilde{X}_t]'\, b\bigr)^2 + \lambda\|b\|_1.
 \]
 
-\textbf{Implementation.} Multiply observation $t$ by weight $\sqrt{\delta^{T-1-t}}$, then fit standard Lasso on the reweighted data.
+To implement this, multiply observation $t$ by weight $\sqrt{\delta^{T-1-t}}$, then fit standard Lasso on the reweighted data.
 
 \begin{proposition}[Sign-flip property of weighted LCD]
 If $w_t > 0$ are deterministic weights constructed independently of $\tilde{X}$, then the weighted LCD statistic $W_j^{(w)} = |\hat{\beta}_j^{(w)}| - |\hat{\beta}_{j+p}^{(w)}|$ satisfies the sign-flip property.
@@ -197,153 +243,88 @@ If $w_t > 0$ are deterministic weights constructed independently of $\tilde{X}$,
 
 \begin{proof}
 Define reweighted data $(Y^w, Z^w)$ where $Y_t^w = w_t Y_t$ and $Z_t^w = w_t[X_t, \tilde{X}_t]$. Since $w_t$ is deterministic and independent of $\tilde{X}$:
-\begin{enumerate}[label=(\roman*)]
+\begin{enumerate}[label=(\roman*), itemsep=2pt]
     \item \emph{Conditional independence:} $\tilde{X} \perp\!\!\!\perp Y \mid X$ implies $Z^w_{\cdot,j+p} \perp\!\!\!\perp Y^w \mid Z^w_{\cdot,1:p}$ (weighting preserves conditional independence).
     \item \emph{Column exchangeability:} $(X,\tilde{X})_{\text{swap}(S)} \stackrel{d}{=} (X,\tilde{X})$ implies $(Z^w_{\cdot,1:p}, Z^w_{\cdot,p+1:2p})_{\text{swap}(S)} \stackrel{d}{=} (Z^w_{\cdot,1:p}, Z^w_{\cdot,p+1:2p})$ since the same row-scaling applies to both original and knockoff columns.
     \item Therefore $W_j^{(w)}(Y^w,[Z^w]_{\text{swap}(S)}) = -W_j^{(w)}(Y^w,Z^w)$ for $j \in S$, by the standard sign-flip argument. \qedhere
 \end{enumerate}
 \end{proof}
+\begin{remark}[FDR guarantee]
+Since the weighted LCD statistics satisfy the sign-flip property, the knockoff$+$ filter applied to $\{W_j^{(w)}\}_{j=1}^p$ at target level $q$ inherits the finite-sample FDR guarantee of \citet{candes2018}, Theorem~3.4: $\text{FDR} \leq q$. The guarantee holds for any fixed, deterministic weight sequence $\{w_t\}$, including the exponential weights $w_t = \sqrt{\delta^{T-1-t}}$ used in discounted IPAD. 
 
-\textbf{Effective sample size.} The weighted Lasso behaves as if operating on
-\[
-    n_{\text{eff}}(\delta) = \frac{1 - \delta^{2T}}{1 - \delta^2}
-\]
-effective observations. For $\delta = 0.97$, $T = 500$: $n_{\text{eff}} \approx 17$. This analytically predicts the power--localisation trade-off.
+ This is a \textbf{conditional} statement: FDR is controlled only if the knockoff construction is valid (i.e.\ $P_X$ is correctly specified), which Assumption~A1 ensures.
+\end{remark}
 
-\textbf{Discount factor selection.} Grid $\delta \in \{0.95, 0.97, 0.98, 0.99, 1.00\}$. In the empirical application, select $\delta$ by minimising out-of-sample forecast MSFE over a 60-month validation window.
+ The weighted Lasso behaves as if operating on
+$$n_{\text{eff}} = \frac{\left(\sum_{t=1}^{T} w_t^2\right)^2}{\sum_{t=1}^{T} w_t^4} =
+ \frac{\left(\frac{1-\delta^T}{1-\delta}\right)^2}{\frac{1-\delta^{2T}}{1-\delta^2}} =
+ \frac{(1-\delta^T)(1+\delta)}{(1-\delta)(1+\delta^T)}$$
+effective observations.For large $T$ where $\delta^T \approx 0$, this simplifies to:
 
-\subsection{Method 4: Rolling-Window IPAD}
-Knockoff construction from full sample ($P_X$ stable); LCD statistics computed within a trailing window of size $h \in \{0.3T, 0.5T, 0.7T\}$; same knockoff+ filter applied to windowed LCD values.
+ $$n_{\text{eff}} \approx \frac{1+\delta}{1-\delta}$$
 
-\subsection{Method 5: Down-Weighted OCMT \citep{chudik2024ocmt}}
-Full-sample OCMT for variable selection (unweighted); exponentially weighted OLS for post-selection forecasting. This is the approach recommended in the source paper.
+This means, for $T=500$, $n_{\text{eff}} = 39, (\delta =0,95)$, so $n_{\text{eff}} << 2p$, which makes selection unreliable and a 'zero-variable selection' possible, giving an FDR of 0/0, i.e. 0. To prevent reporting a distorted FDR image, any configuration averaging less than one discovery across $M$ replications will be flagged as zero power and excluded from FDR stats. $\delta = 0.99$ nearly reaches $n_{\text{eff}} > 2p$, giving reliable seperation. Thus any lower delta can be seen as a stress test rather than recommendation. 
 
-\subsection{Method 6: Oracle Benchmark}
-Knows the break date $t^*$; uses full sample for knockoff construction ($P_X$ stable); restricts LCD statistics to post-break observations only. Provides an upper bound on what any localised method can achieve.
 
-% ============================================================
-\section{Data Generating Processes}
-% ============================================================
+\textbf{Discount factor selection.}  In the simulation study, results are reported for each fixed $\delta \in {0.95, 0.97, 0.98, 0.99, 1.00}$ separately,
+ │ preserving the formal FDR guarantee. The cross-validated $\delta$ is used only in the empirical application, where
+ │ the FDR guarantee is treated as approximate. 
 
-\textbf{Covariate model (stable throughout):}
-\[
-    X_t = BF_t + U_t, \quad F_t \sim N(0, I_r),\quad U_t \sim N(0, \operatorname{diag}(\sigma_1^2, \ldots, \sigma_p^2))
-\]
-with $r = 3$ factors, loadings $B_{jk} \sim U(-1,1)$, idiosyncratic variances $\sigma_j^2 \sim U(0.5, 1.5)$.
+ \subsubsection{Rolling-Window IPAD}
+ 
+An alternative localisation strategy. Knockoffs are constructed from the full sample (since $P_X$ is assumed stable), but the LCD statistics are computed within a trailing window of size $h$. The knockoff$+$ filter is then applied to the windowed LCD values.
 
-\textbf{Response model:}
-\[
-    Y_t = X_t'\beta_t + \varepsilon_t, \quad \varepsilon_t \sim N(0,1).
-\]
+Restricting the Lasso to a trailing window $\{T-h+1, \ldots, T\}$ is equivalent to fitting on a row-subset of $[X, \tilde{X}]$. Since knockoff pairs $(X_j, \tilde{X}_j)$ are exchangeable across all rows jointly (by construction) and $\tilde{X} \perp\!\!\!\perp Y \mid X$ holds on any row-subset, row-selection preserves both properties (given it is done without looking at $\tilde{X}$). Thus, the windowed LCD statistics inherit the sign-flip property, and the knockoff$+$ filter controls FDR at level $q$.
 
-\begin{table}[h!]
-\centering
-\caption{Simulation scenarios (prioritised)}
-\label{tab:scenarios}
-\small
-\begin{tabular}{C{1.5cm} L{3cm} L{4cm} L{5cm}}
-\toprule
-\textbf{Priority} & \textbf{Scenario} & \textbf{Mechanism} & \textbf{What it tests} \\
-\midrule
-Primary & Signal entry/exit & $S^{(1)} \neq S^{(2)}$: some variables active only pre-break, others only post-break & FDR inflation under local null; dual-null divergence \\[4pt]
-Primary & Stable (baseline) & $\beta$ constant & Sanity check: verify both methods work as advertised \\[4pt]
-Secondary & Magnitude shift & $\beta^{(2)} = c\cdot\beta^{(1)}$, same support & Power under signal dilution \\[4pt]
-Secondary & Sign reversal & $\beta^{(2)} = -\beta^{(1)}$ & Average effect $= 0$; OCMT should fail \\
-\bottomrule
-\end{tabular}
-\end{table}
+Rolling-window IPAD has $n_{\text{eff}} = h$ (e.g.\ $150$ at $h = 0.3T$), vs. $n_{\text{eff}} \approx 66$ fo r discounted IPAD at $\delta = 0.97$. Rolling windows thus retain more power at the cost of less emphasis on more recent (possibly post vs. pre break observations).
 
-\textbf{Signal entry/exit specification.} $|S^{(1)}| = |S^{(2)}| = s$; overlap $|S^{(1)} \cap S^{(2)}| = s/2$; non-zero coefficients $\beta_j = A/\sqrt{s}$ where $A$ is calibrated to target SNR.
+Window sizes: $h \in \{0.3T,\; 0.5T,\; 0.7T\}$. This method localises through hard truncation rather than smooth weighting, providing a comparison point for discounted IPAD.
 
-% ============================================================
+\subsection{Benchmarks}
+
+\subsubsection{Down-Weighted OCMT}
+ 
+The approach recommended by \citet{chudik2024ocmt}: full-sample (unweighted) OCMT for variable selection, followed by exponentially weighted OLS for post-selection forecasting. This separates selection and forecasting, down-weighting only at the forecasting stage. It is a benchmark for whether localising the selection step (as discounted IPAD does) offers an advantage over localising only the forecasting step.
+
+\subsubsection{Oracle}
+ 
+Knows the break date $t^*$. Uses the full sample for knockoff construction ($P_X$ stable) but restricts the LCD statistics to post-break observations only. This provides an upper bound on what any localised method can achieve without knowledge of the break timing.
+
 \section{Simulation Design}
-% ============================================================
+\subsection{DGP}
+Following \citet{fan2020ipad} (which I thus intend to replicate), the covariate distribution is stable throughout and follows a latent factor model:
+\begin{equation}
+    X_t = BF_t + U_t, \qquad F_t \sim \mathcal{N}(0, I_r), \quad U_t \sim \mathcal{N}\!\bigl(0,\, \text{diag}(\sigma_1^2, \ldots, \sigma_p^2)\bigr),
+\end{equation}
+with $r = 3$ factors, loadings $B_{jk} \sim U(-1,1)$, and idiosyncratic variances $\sigma_j^2 \sim U(0.5, 1.5)$. Each column of $X$ is rescaled to have $\textit{l}_2$ norm, after which the response is generated as $Y_t = X_t'\beta_t + \varepsilon_t$, $\varepsilon_t \sim \mathcal{N}(0,1)$, where $\beta_t$ is subject to a single structural break at $t^*$.
 
-\begin{table}[h!]
-\centering
-\caption{Dimensionality configurations}
-\label{tab:dimconfigs}
-\small
-\begin{tabular}{C{2cm} C{3cm} L{6cm}}
-\toprule
-\textbf{Config} & $\boldsymbol{(T,p,s)}$ & \textbf{Role} \\
-\midrule
-Low-dim & $(500, 50, 5)$ & Sanity check; fast iteration \\
-\textbf{Baseline} & $\boldsymbol{(500, 200, 20)}$ & \textbf{Primary results} \\
-High-dim & $(300, 300, 15)$ & $p = T$ boundary \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Scenarios}
+ 
+The primary scenario is signal entry/exit: the active sets $S^{(1)}$ and $S^{(2)}$ differ across time, with $|S^{(1)}| = |S^{(2)}| = s$ and overlap $|S^{(1)} \cap S^{(2)}|$ varying from full $s$ to none. Non-zero coefficients are set to $\beta_j = \frac{A}{\sqrt{s}}$. With $\text{Var}(\varepsilon_t) = 1$ and near orthogonal signals, the population signal-to-noise ratio is:
+$$\text{SNR} = \text{Var}(X_t' \beta_t) \approx \sum_{j \in S} \frac{A}{s} \cdot \text{Var}(X_j) \approx s \cdot \frac{A}{s} \cdot 1 = A$$
 
-\textbf{Primary grid:}
-\begin{itemize}[leftmargin=*]
-    \item Break location: $\tau \in \{0.5, 0.7\}$
-    \item Break magnitude (overlap fraction): $\in \{1.0, 0.75, 0.5, 0.25, 0.0\}$
-    \item SNR: $\in \{2, 4\}$
-    \item Discount factor: $\delta \in \{0.95, 0.97, 0.99, 1.00\}$
-    \item Replications: $M = 500$
-\end{itemize}
+The grid uses $A \in \{2, 4\}$, corresponding to $\text{SNR} \in \{2, 4\}$. A stable baseline ($\beta$ constant) serves as a sanity check, verifying that all methods perform as they should in absence of breaks. Two secondary scenarios, magnitude shift ($\beta^{(2)} = c \cdot \beta^{(1)}$, same support) and sign reversal ($\beta^{(2)} = -\beta^{(1)}$), are included if time permits.
 
-Total primary configurations: $2 \times 5 \times 2 \times 4 = 80$ cells $\times$ 6 methods $\times$ 500 reps. At approximately 0.5s per replication (Lasso on $n=500, p=400$), this is $\approx$67 CPU-hours, parallelisable to under 8 hours on 8 cores.
+\subsection{Simulation Grid}
+The configuration uses $(T, p, s) = (500, 200, 20)$. The grid varies: break location $\tau \in \{0.5, 0.7\}$, break at $\tau T$; overlap fraction $\in \{0.0, 0.25, 0.5, 0.75, 1.0\}$; signal-to-noise ratio $\in \{2, 4\}$; and discount factor $\delta \in \{0.95, 0.97, 0.99, 1.00\}$. This yields $2 \times 5 \times 2 \times 4 = 80$ cells, each evaluated across six methods with $M = 500$ replications. I understand the computational demand and therefore have already started running simulations.
 
-\textbf{Evaluation metrics:}
+\subsection{Evaluation Metrics}
 
-\emph{Primary (reported for all methods):}
-\begin{enumerate}[leftmargin=*, label=(\arabic*)]
-    \item Empirical FDR against local null $H_0^{(2)}$ (the forecasting-relevant null)
-    \item Empirical FDR against average null $H_0^{\text{avg}}$
-    \item Power (TPR) against local null $H_0^{(2)}$
-    \item Out-of-sample $R^2_{\text{OOS}}$ (one-step-ahead forecast using post-selection OLS)
+\begin{enumerate}[label=(\arabic*), itemsep=4pt]
+    \item Empirical FDR against $H_0^{(2)}$ (the forecasting-relevant null).
+    \item Empirical FDR against $H_0^{\text{avg}}$.
+    \item Power (true positive rate) against $H_0^{(2)}$.
+    \item Out-of-sample $R^2_{\text{OOS}}$ from one-step-ahead forecasts using post-selection OLS.
 \end{enumerate}
+Evaluating each method against both nulls is essential: it ensures the comparison is not a consequence of mismatched evaluation criteria. 
 
-\emph{Secondary:}
-\begin{enumerate}[leftmargin=*, label=(\arabic*), start=5]
-    \item Selection stability: Jaccard similarity $J(\hat{S}_i, \hat{S}_j)$ averaged over replication pairs
-    \item FDR conditional on discovery: $\text{FDR} \mid |\hat{S}| > 0$ (avoids the $0/0$ issue)
-\end{enumerate}
+\section{Empirical Application (\textit{Only if Time Permits})}
 
-\textbf{Key results sections:}
+Monthly equity premium $r_{t+1}^e = r_{t+1}^{\text{mkt}} - r_f$; 14 standard \citet{welch2008} variables plus 3 lags of each ($p = 56$); sample 1950:01--2023:12; OOS evaluation 1966:01--2023:12 (expanding window, minimum 15 years in-sample). At each forecast origin $t$, apply: (i) IPAD, (ii) OCMT, (iii) Discounted IPAD. $\delta$ is selected from $\{0.95, 0.97, 0.98, 0.99, 1.00\}$ by minimising the mean squared forecast error over the preceding 60 months using post-selection weighted OLS. Since $\delta$ is chosen from the data, the formal FDR guarantee of Proposition 1 (which requires fixed, pre-specified weights) no longer holds exactly; FDR control should be interpreted as approximate in this setting.
 
-\begin{description}[leftmargin=2em]
-    \item[\S4.1 Baseline replication.] Under stability: verify IPAD controls FDR at $q = 0.20$; verify OCMT's empirical FDR.
-    \item[\S4.2 Breakdown analysis.] Trace the FDR of standard IPAD as break severity increases. Plot FDR vs.\ overlap fraction, stratified by SNR.
-    \item[\S4.3 Head-to-head comparison.] IPAD vs.\ OCMT: FDR--power frontiers under each scenario.
-    \item[\S4.4 Discounted IPAD.] Show $\delta < 1$ restores FDR control at the cost of power; plot breakdown threshold curve in (overlap, $\delta$) space; compare empirical power to the $n_{\text{eff}}$ prediction.
-    \item[\S4.5 The dual null in action.] Show that the same run of discounted IPAD has different empirical FDR depending on whether evaluated against $H_0^{(2)}$ or $H_0^{\text{avg}}$.
-    \item[\S4.6 Forecasting comparison.] $R^2_{\text{OOS}}$ across methods; DM tests for pairwise forecast comparisons.
-\end{description}
+Output will be focussed on \citet{campbell2008} $R^2_{OOS}$'s, and examining if the methods pick up parameter instability, i.e. does variable selection shift around breaks (e.g. 2008, COVID). 
 
-% ============================================================
-\section{Empirical Application: Equity Premium Prediction}
-% ============================================================
-
-\textbf{Data.} Monthly equity premium $r_{t+1}^e = r_{t+1}^{\text{mkt}} - r_f$; 14 standard \citet{welch2008} variables plus 3 lags of each ($p = 56$); sample 1950:01--2023:12; OOS evaluation 1966:01--2023:12 (expanding window, minimum 15 years in-sample).
-
-\textbf{Design.} At each forecast origin $t$, apply: (i) IPAD, (ii) OCMT, (iii) Discounted IPAD ($\delta$ chosen by validation MSFE over prior 60 months). Post-selection forecast: OLS on selected variables (or weighted OLS for discounted methods).
-
-\textbf{Outputs.}
-\begin{enumerate}[leftmargin=*, label=(\arabic*)]
-    \item \emph{Selection heatmap:} variables (rows) $\times$ time (columns), coloured by selection frequency across 100 knockoff repetitions.
-    \item \emph{OOS $R^2$ comparison:} cumulative $R^2_{\text{OOS}}$ for each method vs.\ historical mean benchmark.
-    \item \emph{Break narrative:} do variable selections shift around known instability episodes (1973 oil shock, 2008 GFC, 2020 COVID)?
-\end{enumerate}
-
-% ============================================================
-\section{Maintained Assumptions}
-% ============================================================
-
-\begin{enumerate}[leftmargin=*, label=\textbf{A\arabic*.}]
-    \item \textbf{Stable $P_X$.} The covariate distribution does not change at the break. Only $\beta_t$ changes. This isolates the coefficient instability channel and ensures knockoff validity.
-    \item \textbf{Single break.} The simplest form of instability. Discussion covers extensions to multiple breaks and gradual drift.
-    \item \textbf{Cross-sectional independence across $t$.} Observations are i.i.d.\ draws from the factor model within each period. Serial dependence is handled by TSKI (explicitly out of scope).
-    \item \textbf{Known target FDR level.} $q = 0.20$ throughout (standard in the knockoff literature).
-\end{enumerate}
-
-% ============================================================
-\section{Expected Contributions}
-% ============================================================
-
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Summary of expected contributions}
 \label{tab:contributions}
@@ -353,73 +334,17 @@ Total primary configurations: $2 \times 5 \times 2 \times 4 = 80$ cells $\times$
 \textbf{\#} & \textbf{Contribution} & \textbf{Type} & \textbf{Strength} \\
 \midrule
 1 & First comparison of IPAD and OCMT under parameter instability & MC Empirical & Main result: who wins when? \\[4pt]
-2 & Dual-null separation: IPAD and OCMT target different nulls & Conceptual & Framework-level insight; claimed regardless of MC outcomes \\[4pt]
-3 & Discounted LCD statistics with formal sign-flip verification & Methodological & Simple but novel; extends knockoff toolkit \\[4pt]
-4 & Breakdown threshold characterisation: when does IPAD's FDR guarantee fail? & Diagnostic & Practical guidance for applied researchers \\[4pt]
+2 & Dual-null separation: IPAD and OCMT target different nulls & Conceptual & Framework insight; achieved regardless outcomes \\[4pt]
+3 & Discounted LCD statistics with formal sign-flip verification & Methods & Extends knockoff toolkit \\[4pt]
+4 & Breakdown threshold characterisation: when does IPAD's FDR guarantee fail? & Diagnostic & Insight for future research \\[4pt]
 5 & Equity premium application with time-varying selections & Empirical & Connects to macro-finance literature \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% ============================================================
-\section{Timeline}
-% ============================================================
 
-\begin{table}[h!]
-\centering
-\caption{8-week thesis timeline}
-\label{tab:timeline}
-\small
-\begin{tabular}{C{1.2cm} L{5cm} L{7cm}}
-\toprule
-\textbf{Week} & \textbf{Milestone} & \textbf{Deliverable} \\
-\midrule
-1 & Finalise proposal. Verify IPAD baseline. Implement OCMT. Run stable-DGP sanity check. & Working comparison pipeline; Table 1 (baseline FDR/power). \\[3pt]
-2 & Implement break DGPs. Run IPAD under instability. Document FDR inflation. & Figure: FDR vs.\ overlap fraction. \S4.1--4.2 draft results. \\[3pt]
-3 & Implement discounted IPAD + rolling-window IPAD. Run against oracle. & \S4.3--4.4 results. Breakdown threshold figure. \\[3pt]
-4 & Full simulation grid (primary). Generate all tables/figures. & Complete simulation results. \\[3pt]
-5 & Secondary grid (high-dim, sign reversal). Begin empirical application. & Appendix tables. Application data pipeline working. \\[3pt]
-6 & Finish empirical application. Write \S4 (Results) and \S5 (Application). & Draft results + application chapters. \\[3pt]
-7 & Write \S1 (Intro), \S2 (Literature), \S3 (Methods), \S6 (Conclusion). & Full draft. \\[3pt]
-8 & Revisions, polish, buffer for supervisor feedback. & Final submission. \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-% ============================================================
-\section{Scope Management}
-% ============================================================
-
-\textbf{Hard scope (must deliver):}
-\begin{itemize}[leftmargin=*]
-    \item Simulation comparison: IPAD vs.\ OCMT vs.\ Discounted IPAD vs.\ Oracle
-    \item Primary grid: baseline + signal entry/exit scenario, $(500, 200, 20)$
-    \item Sign-flip proof for discounted LCD
-    \item Dual-null evaluation
-    \item Empirical application (streamlined: 1 expanding window, 3 methods)
-\end{itemize}
-
-\textbf{Soft scope (deliver if time allows):}
-\begin{itemize}[leftmargin=*]
-    \item High-dimensional configuration; rolling-window IPAD variant
-    \item Magnitude shift and sign reversal scenarios
-    \item Derandomisation (run each method 50$\times$ with different knockoff seeds; report stability)
-    \item DM tests for forecast comparison
-\end{itemize}
-
-\textbf{Explicitly out of scope:}
-\begin{itemize}[leftmargin=*]
-    \item Formal asymptotic theory for discounted IPAD FDR
-    \item Serial dependence in $X_t$ (handled by TSKI)
-    \item Joint $P_X$ and $\beta$ instability; deep generative knockoff construction
-    \item Multiple simultaneous breaks (discussed qualitatively only)
-\end{itemize}
-
-% ============================================================
-\section{Risk Mitigation}
-% ============================================================
-
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Risk assessment and mitigation}
 \label{tab:risks}
@@ -428,36 +353,20 @@ Total primary configurations: $2 \times 5 \times 2 \times 4 = 80$ cells $\times$
 \toprule
 \textbf{Risk} & \textbf{Likelihood} & \textbf{Mitigation} \\
 \midrule
-Discounted IPAD does not control FDR & Medium & The comparison is the main contribution. A negative result---``discounting helps power but does not fully restore FDR''---is informative. Report oracle as upper bound. \\[4pt]
-Computation too slow & Low & Primary grid is $\approx$67 CPU-hours. Parallelise on 8 cores ($<$8 hrs). Cut reps to $M=200$ if needed. \\[4pt]
-OCMT's FDR is accidentally good & Low & Would be an interesting finding. Report honestly; attribute to Bonferroni-like conservatism in the critical value. \\[4pt]
-Empirical application shows no instability & Medium & Simulation study stands alone. ``Methods agree $\Rightarrow$ stability era'' is itself a finding. \\[4pt]
-Supervisor wants formal theory & Medium & Offer the $n_{\text{eff}}$ analytical prediction plus sign-flip proof as the theoretical component. Frame as ``Monte Carlo evidence motivating future theoretical development.'' \\
+Discounted IPAD does not control FDR & Medium & The comparison is the main contribution. A negative result is informative. \\[4pt]
+Computation too slow & Low & Primary grid is $\approx$67 CPU-hours. Parallelise on 8 cores ($<$8 hrs). Cut reps to $M=200$ if needed. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% ============================================================
-\section{What Makes This a Strong Thesis}
-% ============================================================
 
-\begin{enumerate}[leftmargin=*, label=\arabic*.]
-    \item \textbf{Dual contribution structure.} Even if discounted IPAD ``fails,'' the comparison and dual-null insight remain. The thesis has a floor.
 
-    \item \textbf{Explicit connection between two published papers by the same co-author.} Examiners immediately see why this matters.
-
-    \item \textbf{Clean separation of concerns.} $P_X$ instability ($\to$ TSKI) vs.\ $\beta$ instability ($\to$ this thesis). The student can explain exactly what is and is not in scope.
-
-    \item \textbf{Analytical prediction meets simulation.} The $n_{\text{eff}}(\delta)$ formula gives a testable quantitative prediction---if the simulation matches, it validates the mechanism; if it diverges, it reveals break contamination.
-
-    \item \textbf{Real data grounds the findings.} The equity premium application connects the simulation study to a well-known instability narrative in macro-finance.
-
-    \item \textbf{Reproducibility.} Python code, fixed seeds, specified grid. Any examiner can replicate.
-\end{enumerate}
+ 
 
 % ============================================================
-\section*{References}
+% References
 % ============================================================
+\newpage
 
 \begingroup
 \small
@@ -480,6 +389,11 @@ Barber, R.~F. and Cand\`{e}s, E.~J. (2015).
 Barber, R.~F., Cand\`{e}s, E.~J., and Samworth, R.~J. (2020).
 \newblock Robust inference with knockoffs.
 \newblock \emph{The Annals of Statistics}, 48(3):1409--1431.
+
+\bibitem[Campbell and Thompson(2008)]{campbell2008}
+Campbell, J.~Y. and Thompson, S.~B. (2008).
+\newblock Predicting excess stock returns out of sample: Can anything beat the historical average?
+\newblock \emph{The Review of Financial Studies}, 21(4):1509--1531.
 
 \bibitem[Cand\`{e}s et al.(2018)]{candes2018}
 Cand\`{e}s, E., Fan, Y., Janson, L., and Lv, J. (2018).
@@ -506,11 +420,6 @@ Fan, Y., Lv, J., Sharifvaghefi, M., and Uematsu, Y. (2020).
 \newblock IPAD: Stable interpretable forecasting with knockoffs inference.
 \newblock \emph{Journal of the American Statistical Association}, 115(532):1822--1834.
 
-\bibitem[Ke et al.(2024)]{ke2024}
-Ke, Z.~T., Liu, X., and Ma, Y. (2024).
-\newblock Power of knockoff: the impact of ranking algorithm, augmented design, and symmetric statistic.
-\newblock \emph{Journal of Machine Learning Research}, 25(3).
-
 \bibitem[Liu et al.(2024)]{liu2024}
 Liu, X., Sun, Q., and Ke, Z.~T. (2024).
 \newblock GKnockoff: testing hypotheses with controlled FDR in the presence of structural breaks.
@@ -520,31 +429,6 @@ Liu, X., Sun, Q., and Ke, Z.~T. (2024).
 Nguyen, T.~B., Chevalier, J.~A., Thirion, B., and Arlot, S. (2020).
 \newblock Aggregation of multiple knockoffs.
 \newblock In \emph{Proceedings of the 37th International Conference on Machine Learning (ICML)}.
-
-\bibitem[Ren and Barber(2023)]{ren2023}
-Ren, Z. and Barber, R.~F. (2023).
-\newblock Derandomised knockoffs: leveraging e-values for false discovery rate control.
-\newblock \emph{Journal of the American Statistical Association}, 118(542).
-
-\bibitem[Romano et al.(2020)]{romano2020}
-Romano, Y., Sesia, M., and Cand\`{e}s, E.~J. (2020).
-\newblock Deep knockoffs.
-\newblock \emph{Journal of the American Statistical Association}, 115(532):1861--1872.
-
-\bibitem[Rossi(2021)]{rossi2021}
-Rossi, B. (2021).
-\newblock Forecasting in the presence of instabilities: how we know whether models predict well and how to improve them.
-\newblock \emph{Journal of Economic Literature}, 59(4):1135--1190.
-
-\bibitem[Stock and Watson(2002)]{stockwatson2002}
-Stock, J.~H. and Watson, M.~W. (2002).
-\newblock Forecasting using principal components from a large number of predictors.
-\newblock \emph{Journal of the American Statistical Association}, 97(460):1167--1179.
-
-\bibitem[Wei et al.(2025)]{wei2025}
-Wei, Y., Ke, Z.~T., and Zhang, C.~H. (2025).
-\newblock FAR-knockoff: a powerful method for false discovery rate control with knockoffs.
-\newblock Manuscript.
 
 \bibitem[Welch and Goyal(2008)]{welch2008}
 Welch, I. and Goyal, A. (2008).
