@@ -22,6 +22,9 @@ def apply_filter(W: np.ndarray, q: float) -> np.ndarray:
     return W >= knockoff_threshold(W, q)
 
 
-def ocmt_threshold(p: int, T: int, alpha: float = 0.05, delta: float = 1.0) -> float:
-    """OCMT critical value c_p(T, delta) = Phi^{-1}(1 - alpha / (2 * p^delta))."""
+def ocmt_threshold(p: int, alpha: float = 0.05, delta: float = 1.0) -> float:
+    """OCMT critical value c_p(delta) = Phi^{-1}(1 - alpha / (2 * p^delta)).
+
+    T does not appear in the Bonferroni formula; it is not a parameter here.
+    """
     return float(stats.norm.ppf(1.0 - alpha / (2.0 * p ** delta)))

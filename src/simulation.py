@@ -64,6 +64,67 @@ def run_replication(params: dict, seed: int) -> list[dict]:
     ]
 
 
+def _replication_rolling_sensitivity(params: dict, seed: int) -> list[dict]:
+    """Single replication for the rolling-window sensitivity appendix.
+
+    Runs ipad_rolling with every h in config.H_GRID for one dataset draw.
+    Uses the same shared pre-computation (SDP once per replication) as the
+    main simulation.
+    """
+    rng = np.random.default_rng(seed)
+    data = generate_dataset(
+        config.T, config.P, config.S, config.R_TRUE,
+        params["tau"], params["overlap"], params["snr"], rng,
+    )
+    X, Y = data["X"], data["Y"]
+    beta_pre, beta_post, t_star = data["beta_pre"], data["beta_post"], data["t_star"]
+
+    r_hat = estimate_num_factors(X, config.R_MAX)
+    B_hat, sigma_sq_hat = estimate_factor_model(X, r_hat)
+    s_val = solve_sdp(B_hat @ B_hat.T + np.diag(sigma_sq_hat))
+    ipad_kw = dict(B_hat=B_hat, sigma_sq_hat=sigma_sq_hat, s_val=s_val,
+                   n_knockoffs=config.N_KNOCKOFFS, rng=rng)
+
+    rows = []
+    for h_frac in config.H_GRID:
+        h = round(h_frac * config.T)
+        result = ipad_rolling(X, Y, config.Q, h, **ipad_kw)
+        rows.append({
+            "rep": seed, "method": f"IPAD-roll-h{h_frac}", "h_frac": h_frac,
+            **params,
+            **evaluate_all(result, beta_pre, beta_post, t_star, X, Y),
+        })
+    return rows
+
+
+def run_rolling_sensitivity(
+    cells: list[dict] | None = None,
+    M: int | None = None,
+    n_jobs: int = -1,
+    output_path: str = "results/rolling_sensitivity.parquet",
+) -> pd.DataFrame:
+    """Rolling-window sensitivity appendix: run all h in H_GRID for a set of cells.
+
+    Suggested cells: one representative tau × overlap × snr slice at fixed
+    delta=1.00 (so that the only variable is h).  Defaults to the full grid
+    at delta=1.00 if cells is None.
+    """
+    if cells is None:
+        cells = [p for p in build_grid() if p["delta"] == 1.00]
+    if M is None:
+        M = config.M
+
+    all_rows = Parallel(n_jobs=n_jobs)(
+        delayed(_replication_rolling_sensitivity)(params, seed)
+        for params in cells
+        for seed in range(M)
+    )
+    df = pd.DataFrame([row for rep in all_rows for row in rep])
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    df.to_parquet(output_path, index=False)
+    return df
+
+
 def run_cell(params: dict, M: int | None = None, n_jobs: int = -1) -> pd.DataFrame:
     if M is None:
         M = config.M

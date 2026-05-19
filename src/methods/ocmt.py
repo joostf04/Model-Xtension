@@ -33,7 +33,7 @@ def ocmt_select(
     se = np.sqrt(ss_res / ((n - 2) * np.where(XX > 0, XX, 1.0)))
     t_stats = np.abs(beta / np.where(se > 0, se, np.inf))
 
-    sel = t_stats >= ocmt_threshold(p, n, alpha, delta_penalise)
+    sel = t_stats >= ocmt_threshold(p, alpha, delta_penalise)
     sel_freq = sel.astype(float)
 
     if sel.sum() > 0:

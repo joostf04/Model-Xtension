@@ -33,7 +33,7 @@ def make_beta(
     new_vars = rng.choice(complement, size=s - n_overlap, replace=False)
     S2 = np.concatenate([shared, new_vars]).astype(int)
 
-    coef = snr / np.sqrt(s)
+    coef = np.sqrt(snr / s)
     beta_pre = np.zeros(p)
     beta_pre[S1] = coef
     beta_post = np.zeros(p)

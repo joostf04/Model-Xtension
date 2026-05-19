@@ -20,6 +20,15 @@ def ipad_discounted(
 
     Observation t = T-1 receives weight 1; t = 0 receives delta^(T-1).
     At delta = 1 this reduces to standard IPAD (useful sanity check).
+
+    Design note — intentional asymmetry vs OCMT-dw
+    ------------------------------------------------
+    This method localises the *selection* step via a weighted Lasso.
+    The post-selection OLS forecast is deliberately unweighted: the goal is
+    to isolate whether localised selection improves forecasting, independently
+    of any localisation at the forecasting stage.  OCMT-dw does the opposite:
+    unweighted selection, weighted forecast.  The two methods bracket the
+    question of where localisation matters most.
     """
     T = X.shape[0]
     sw = delta ** np.arange(T - 1, -1, -1)
