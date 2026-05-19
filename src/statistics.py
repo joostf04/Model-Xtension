@@ -30,7 +30,7 @@ def select_lambda(
         sample_weight = sample_weight[row_mask] if sample_weight is not None else None
     if sample_weight is not None:
         Z, _Y = Z * sample_weight[:, None], _Y * sample_weight
-    cv = LassoCV(cv=5, fit_intercept=False, max_iter=10_000, n_jobs=1)
+    cv = LassoCV(cv=5, fit_intercept=False, max_iter=30_000, tol=1e-3, n_jobs=1)
     cv.fit(Z, _Y)
     return float(cv.alpha_)
 
@@ -54,7 +54,7 @@ def lcd_statistics(
         sample_weight = sample_weight[row_mask] if sample_weight is not None else None
     if sample_weight is not None:
         Z, _Y = Z * sample_weight[:, None], _Y * sample_weight
-    model = Lasso(alpha=lam, fit_intercept=False, max_iter=10_000)
+    model = Lasso(alpha=lam, fit_intercept=False, max_iter=30_000, tol=1e-3)
     model.fit(Z, _Y)
     beta = model.coef_
     return np.abs(beta[:p]) - np.abs(beta[p:])
