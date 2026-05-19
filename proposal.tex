@@ -296,12 +296,12 @@ Following \citet{fan2020ipad} (which I thus intend to replicate), the covariate 
 \begin{equation}
     X_t = BF_t + U_t, \qquad F_t \sim \mathcal{N}(0, I_r), \quad U_t \sim \mathcal{N}\!\bigl(0,\, \text{diag}(\sigma_1^2, \ldots, \sigma_p^2)\bigr),
 \end{equation}
-with $r = 3$ factors, loadings $B_{jk} \sim U(-1,1)$, and idiosyncratic variances $\sigma_j^2 \sim U(0.5, 1.5)$. Each column of $X$ is rescaled to have $\textit{l}_2$ norm, after which the response is generated as $Y_t = X_t'\beta_t + \varepsilon_t$, $\varepsilon_t \sim \mathcal{N}(0,1)$, where $\beta_t$ is subject to a single structural break at $t^*$.
+with $r = 3$ factors, loadings $B_{jk} \sim U(-1,1)$, and idiosyncratic variances $\sigma_j^2 \sim U(0.5, 1.5)$. Each column of $X$ is rescaled to have $\textit{l}_2$ norm one, after which the response is generated as $Y_t = X_t'\beta_t + \varepsilon_t$, $\varepsilon_t \sim \mathcal{N}(0,1)$, where $\beta_t$ is subject to a single structural break at $t^*$.
 
 \subsection{Scenarios}
  
-The primary scenario is signal entry/exit: the active sets $S^{(1)}$ and $S^{(2)}$ differ across time, with $|S^{(1)}| = |S^{(2)}| = s$ and overlap $|S^{(1)} \cap S^{(2)}|$ varying from full $s$ to none. Non-zero coefficients are set to $\beta_j = \frac{A}{\sqrt{s}}$. With $\text{Var}(\varepsilon_t) = 1$ and near orthogonal signals, the population signal-to-noise ratio is:
-$$\text{SNR} = \text{Var}(X_t' \beta_t) \approx \sum_{j \in S} \frac{A}{s} \cdot \text{Var}(X_j) \approx s \cdot \frac{A}{s} \cdot 1 = A$$
+The primary scenario is signal entry/exit: the active sets $S^{(1)}$ and $S^{(2)}$ differ across time, with $|S^{(1)}| = |S^{(2)}| = s$ and overlap $|S^{(1)} \cap S^{(2)}|$ varying from full $s$ to none. Non-zero coefficients are set to $\beta_j = \sqrt{\frac{AT}{s}}$  With $\text{Var}(\varepsilon_t) = 1$ and near orthogonal signals, the population signal-to-noise ratio is:
+ $$\text{SNR} = \text{Var}(X_t'\beta_t) \approx \sum_{j \in S} \frac{AT}{s} \cdot \frac{1}{T} = A$$
 
 The grid uses $A \in \{2, 4\}$, corresponding to $\text{SNR} \in \{2, 4\}$. A stable baseline ($\beta$ constant) serves as a sanity check, verifying that all methods perform as they should in absence of breaks. Two secondary scenarios, magnitude shift ($\beta^{(2)} = c \cdot \beta^{(1)}$, same support) and sign reversal ($\beta^{(2)} = -\beta^{(1)}$), are included if time permits.
 
@@ -359,11 +359,49 @@ Computation too slow & Low & Primary grid is $\approx$67 CPU-hours. Parallelise 
 \end{tabular}
 \end{table}
 
+\section{Comments Jesse}
+
+\subsection{Waarom OCMT als geen formele FDR control?} 
+
+OCMT handles instabiliteit van parameters. IPAD wél formele FDR control, niet gemaakt voor instabiliteit van parameters. OCMT kan juist deze instabiliteit handlen, maar biedt geen formele fdr control.
+
+\subsection{Kans dat OCMT toch FDR control geeft}
+
+Bij stabiele $\beta$ en sparse matrix, i.e. weinig signalen t.o.v. $T$. In dit geval, genoeg power per variabele wegens stabiliteit en dus gaat FDR richting 0.
+
+FDR (en dus control) hangt af van $H_0$  (avg of 2). Bij variabele die pre break non-zero is maar post break 0, zou het denk ik bij $H_0^{avg}$ impliciet kunnen, bij $H_0^2$ verwacht ik het niet.
+
+\subsection{Wat is 'better' variable selection?}
+
+In esssentie zie ik beter als een betere FDR-power trade-off met oog op forecasten, dus zou de focus op $R^2_{OOS}$ zijn, maar zijn wellicht de power en FDR statistieken informatiever.
+
+Primsrily OOS $R^2$, uiteindelijk is de reden voor interesse forecasting. Daarnaast power vs $H_0^2$ (vind de methode de variabelen die nu actief zijn) en empirischew FDR vs $H_0^2$.
+
+\subsection{Wat als meer dan n covariates geselecteerd in de eerste stap}
+
+\citet{chudik2018} hebben door via een net condition te eisen dat $|K| < T$, waar K de selected set is, deze situatie vermeden. De thereshold is conservatief, dus voor p =200 en T=500 is de kans klein dat dit gebeurt, maar zou $\delta$ kunnen verhogen mocht dit toch gebeuren. Als dit niet effectief is zou Lasso ipv OLS ook nog kunnen, aangezien deze wel kan werken met $|K| > T$
+
+\subsection{Als je de knockoffs construeert, neemje aan dat aantal factors bekend is? }
+
+ Volg \citet{fan2020ipad}, 
+ \begin{enumerate}
+     \item Gebruik r=3 als true aantal factoren voor DGP.
+     \item Bij IPAD methode schatten we deze r alsnog via \citet{ahn2013} 
+ \end{enumerate}
+
+ Voor empirische weet ik uiteraard aantal true factoren niet.
+   
+
+
+
+
+
+
 
 
  
 
-% ============================================================
+%  ============================================================
 % References
 % ============================================================
 \newpage

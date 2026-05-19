@@ -41,7 +41,7 @@ def run_replication(params: dict, seed: int) -> list[dict]:
     s_val = solve_sdp(B_hat @ B_hat.T + np.diag(sigma_sq_hat))
 
     delta = params["delta"]
-    sw_disc = delta ** np.arange(config.T - 1, -1, -1)
+    sw_disc = np.sqrt(delta ** np.arange(config.T - 1, -1, -1))
     h = round(config.H_FRAC * config.T)
 
     ipad_kw = dict(

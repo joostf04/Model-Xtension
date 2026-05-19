@@ -17,12 +17,12 @@ def select_lambda(
     application) would be 100x more expensive and has negligible impact on the
     simulation because the data matrix is fixed — only the knockoff columns vary.
 
-    sample_weight: down-weighting factors w_t = delta^(T-t).  Applied as
-    direct rescaling (Z *= w, Y *= w), so the Lasso minimises
-    sum_t w_t^2 * residual_t^2.  This matches Chudik et al. (2024) who
-    define down-weighted observations as w_t * (x_t, y_t) and run OLS/Lasso
-    on the scaled data.  sklearn's sample_weight is NOT used because it
-    normalises weights to sum to n_samples, shifting the effective lambda.
+    sample_weight: row-scaling factors sqrt(delta^(T-t)).  Applied as
+    direct rescaling (Z *= w, Y *= w); because Lasso squares residuals the
+    effective objective weight per observation is w_t^2 = delta^(T-t),
+    matching the proposal's sum_t delta^(T-t) * residual_t^2.  sklearn's
+    sample_weight is NOT used because it normalises weights to sum to
+    n_samples, shifting the effective lambda.
     """
     Z, _Y = np.hstack([X, X_tilde]), Y
     if row_mask is not None:

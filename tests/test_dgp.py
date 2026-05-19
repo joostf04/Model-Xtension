@@ -18,7 +18,7 @@ def test_simulate_X_shape():
 def test_simulate_X_unit_l2_norm():
     B, s = make_factor_model(20, 3, rng())
     X = simulate_X(500, B, s, rng())
-    np.testing.assert_allclose(np.linalg.norm(X, axis=0), np.sqrt(500), rtol=1e-10)
+    np.testing.assert_allclose(np.linalg.norm(X, axis=0), 1.0, rtol=1e-10)
 
 
 def test_make_beta_break_location():

@@ -17,7 +17,7 @@ def simulate_X(
     U = rng.standard_normal((T, p)) * np.sqrt(sigma_sq)
     X = F @ B.T + U
     norms = np.linalg.norm(X, axis=0, keepdims=True)
-    return X / norms * np.sqrt(T)
+    return X / norms
 
 
 def make_beta(
@@ -33,7 +33,7 @@ def make_beta(
     new_vars = rng.choice(complement, size=s - n_overlap, replace=False)
     S2 = np.concatenate([shared, new_vars]).astype(int)
 
-    coef = np.sqrt(snr / s)
+    coef = np.sqrt(snr * T / s)
     beta_pre = np.zeros(p)
     beta_pre[S1] = coef
     beta_post = np.zeros(p)
